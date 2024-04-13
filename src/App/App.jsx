@@ -1,28 +1,36 @@
-/* eslint-disable react/no-unescaped-entities */
-import React from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Header from '../components/Header';
+import CharactersList from '../components/CharactersList';
+
+const queryClient = new QueryClient();
 
 function App() {
+  const [query, setQuery] = useState('');
+  const onSearch = (text) => {
+    setQuery(text);
+  };
   return (
 	<>
-		<Router>
-			<Header />
-			<Switch>
-				<Route
-					exact
-					path="/"
-				>
-					<section className="lumx-spacing-padding-horizontal-huge" />
-				</Route>
-			</Switch>
-		</Router>
-
+		<QueryClientProvider client={queryClient}>
+			<Router>
+				<Header onSearch={onSearch} />
+				<Switch>
+					<Route
+						exact
+						path="/"
+					>
+						<CharactersList query={query} />
+					</Route>
+				</Switch>
+			</Router>
+		</QueryClientProvider>
 	</>
   );
 }
