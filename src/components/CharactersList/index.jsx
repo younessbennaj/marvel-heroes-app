@@ -1,8 +1,13 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { ProgressCircular, FlexBox } from '@lumx/react';
+import { mdiSearchWeb, mdiAlertCircle } from '@lumx/icons';
+import {
+  FlexBox, Heading, Icon, Size, Text,
+} from '@lumx/react';
 import CharactersListItem from '../CharactersListItem';
+import CharactersListSkeleton from '../CharactersListSkeleton';
+import EmptyStatePlaceholder from '../EmptyStatePlaceholder';
 
 axios.defaults.baseURL = 'http://gateway.marvel.com/v1/public';
 axios.defaults.params = {
@@ -12,7 +17,7 @@ axios.defaults.params = {
 const fetchCharacters = async (query) => {
   const response = await axios.get('/characters', {
     params: {
-      // limit: 4,
+      limit: 4,
       nameStartsWith: query,
       orderBy: '-modified',
       // offset: 4,
@@ -30,13 +35,36 @@ const useCharactersQuery = ({ query }) => useQuery({
 const CharactersList = ({ query }) => {
   const { data: characters, isLoading, error } = useCharactersQuery({ query });
 
-  if (isLoading) return <ProgressCircular theme="light" />;
+  if (isLoading) {
+    return (<CharactersListSkeleton />);
+  }
   if (error) {
     return (
-	<div>
-		Error:
-		{error.message}
-	</div>
+	<EmptyStatePlaceholder
+		icon={mdiAlertCircle}
+		title="An error occurred"
+		description="Please try again later"
+	/>
+    );
+  }
+
+  if (!characters) {
+    return (
+	<EmptyStatePlaceholder
+		icon={mdiSearchWeb}
+		title="Explore Marvel Comics Heroes universe"
+		description="Dive into the dazzling domain of all the classic characters you love - and those you’ll soon discover!"
+	/>
+    );
+  }
+
+  if (characters.length === 0) {
+    return (
+	<EmptyStatePlaceholder
+		icon={mdiAlertCircle}
+		title="No results found"
+		description="Try searching for another character"
+	/>
     );
   }
 
