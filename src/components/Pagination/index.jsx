@@ -16,7 +16,7 @@ const Pagination = ({
   }));
 
   return (
-	<FlexBox className="lumx-spacing-padding-big" orientation="horizontal" gap="huge" hAlign="center" vAlign="center">
+	<FlexBox className="lumx-spacing-padding-big" orientation="horizontal" gap="huge" hAlign="center" vAlign="center" wrap>
 		{pageItemData.map(({ id, page, isActive }) => (
 			<Link isDisabled={isActive} color="primary" key={id} onClick={() => onChange(page)} type="button">{page}</Link>
 		))}
