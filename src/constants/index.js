@@ -1,0 +1,3 @@
+const CHARACTERS_RESULT_LIMIT = 4;
+
+export default CHARACTERS_RESULT_LIMIT;

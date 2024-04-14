@@ -7,6 +7,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 code {
@@ -17,3 +22,4 @@ code {
 @import './App/App.scss';
 @import './components/Header/index.scss';
 @import './components/Search/index.scss';
+@import './components/CharactersList/index.scss';

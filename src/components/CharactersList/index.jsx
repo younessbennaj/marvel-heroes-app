@@ -1,43 +1,25 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import React, { useCallback, useState } from 'react';
 import { mdiSearchWeb, mdiAlertCircle } from '@lumx/icons';
 import {
-  FlexBox, Heading, Icon, Size, Text,
+  FlexBox,
 } from '@lumx/react';
 import CharactersListItem from '../CharactersListItem';
 import CharactersListSkeleton from '../CharactersListSkeleton';
 import EmptyStatePlaceholder from '../EmptyStatePlaceholder';
-
-axios.defaults.baseURL = 'http://gateway.marvel.com/v1/public';
-axios.defaults.params = {
-  apikey: process.env.REACT_APP_MARVEL_API_KEY,
-};
-
-const fetchCharacters = async (query) => {
-  const response = await axios.get('/characters', {
-    params: {
-      limit: 4,
-      nameStartsWith: query,
-      orderBy: '-modified',
-      // offset: 4,
-    },
-  });
-  return response.data.data.results;
-};
-
-const useCharactersQuery = ({ query }) => useQuery({
-  enabled: !!query,
-  queryKey: ['characters', query],
-  queryFn: () => fetchCharacters(query),
-});
+import Pagination from '../Pagination';
+import CHARACTERS_RESULT_LIMIT from '../../constants';
+import useCharactersQuery from '../../queries';
 
 const CharactersList = ({ query }) => {
-  const { data: characters, isLoading, error } = useCharactersQuery({ query });
+  const [page, setPage] = useState(1);
+  const {
+    data, isLoading, error, isPlaceholderData,
+  } = useCharactersQuery({ query, page });
 
-  if (isLoading) {
-    return (<CharactersListSkeleton />);
-  }
+  const onPageChange = useCallback((pageNumber) => {
+    setPage(pageNumber);
+  }, [setPage]);
+
   if (error) {
     return (
 	<EmptyStatePlaceholder
@@ -48,7 +30,7 @@ const CharactersList = ({ query }) => {
     );
   }
 
-  if (!characters) {
+  if (!data?.characters && !isLoading) {
     return (
 	<EmptyStatePlaceholder
 		icon={mdiSearchWeb}
@@ -58,7 +40,7 @@ const CharactersList = ({ query }) => {
     );
   }
 
-  if (characters.length === 0) {
+  if (data?.characters.length === 0 && !isLoading) {
     return (
 	<EmptyStatePlaceholder
 		icon={mdiAlertCircle}
@@ -69,9 +51,12 @@ const CharactersList = ({ query }) => {
   }
 
   return (
-	<section className="lumx-spacing-padding-horizontal-huge">
-		<FlexBox orientation="vertical" vAlign="space-between" gap="medium">
-			{characters && characters.map((character) => (
+	<section className="lumx-spacing-padding-horizontal-huge characters-list-container">
+		{(isLoading || isPlaceholderData) && <CharactersListSkeleton />}
+
+		{!isLoading && !isPlaceholderData && (
+		<FlexBox className="characters-list" orientation="vertical" vAlign="space-between" gap="tiny">
+			{data.characters.map((character) => (
 				<CharactersListItem
 					comicsAvailable={character.comics.available}
 					seriesAvailable={character.series.available}
@@ -83,6 +68,10 @@ const CharactersList = ({ query }) => {
 				/>
 			))}
 		</FlexBox>
+		)}
+		{data && data.total > CHARACTERS_RESULT_LIMIT && (
+		<Pagination currentPage={page} onChange={onPageChange} total={data?.total} pageSize={CHARACTERS_RESULT_LIMIT} />
+		)}
 	</section>
   );
 };
