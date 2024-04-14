@@ -11,7 +11,7 @@ const CharactersListItem = ({
 			<Thumbnail aspectRatio="square" image={image} alt="l" size={Size.xl} variant={ThumbnailVariant.rounded} />
 		</GenericBlock.Figure>
 		<GenericBlock.Content orientation="vertical">
-			<FlexBox orientation="vertical" vAlign="space-between" gap="medium">
+			<FlexBox orientation="vertical" vAlign="space-between" gap="tiny">
 				<Heading as="h3">{name}</Heading>
 				<Text as="p" typography="body1" color="dark" colorVariant="L2">
 					{description || 'no description available'}

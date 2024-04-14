@@ -26,7 +26,7 @@ function App() {
 						exact
 						path="/"
 					>
-						<CharactersList query={query} />
+						<CharactersList key={query} query={query} />
 					</Route>
 				</Switch>
 			</Router>

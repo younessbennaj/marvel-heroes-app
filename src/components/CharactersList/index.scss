@@ -1,0 +1,9 @@
+.characters-list-container {
+  min-height: calc(100vh - 68px);
+  display: flex;
+  flex-direction: column;
+}
+
+.characters-list {
+  flex-grow: 1;
+}
